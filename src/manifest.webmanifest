@@ -1,0 +1,14 @@
+{
+  "name": "FlexMix — E85 Blend Calculator",
+  "short_name": "FlexMix",
+  "description": "How much E85 and pump gas to add to hit a target ethanol blend.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b0d0f",
+  "theme_color": "#0b0d0f",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

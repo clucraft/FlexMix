@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <clipPath id="drop">
+      <path d="M256 88C256 88 136 232 136 316a120 120 0 0 0 240 0C376 232 256 88 256 88Z"/>
+    </clipPath>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="#0b0d0f"/>
+  <rect x="0" y="300" width="512" height="212" fill="#c6f432" clip-path="url(#drop)"/>
+  <path d="M256 88C256 88 136 232 136 316a120 120 0 0 0 240 0C376 232 256 88 256 88Z"
+        fill="none" stroke="#c6f432" stroke-width="24" stroke-linejoin="round"/>
+</svg>

@@ -1,0 +1,8 @@
+services:
+  flexmix:
+    build: .
+    image: flexmix:latest
+    container_name: flexmix
+    ports:
+      - "8085:80"
+    restart: unless-stopped

@@ -1,0 +1,10 @@
+{
+  "name": "flexmix",
+  "version": "1.0.0",
+  "private": true,
+  "description": "E85 blend calculator",
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  }
+}

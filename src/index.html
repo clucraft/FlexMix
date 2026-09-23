@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b0d0f">
+  <meta name="color-scheme" content="dark">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="FlexMix">
+  <title>FlexMix</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <main class="app">
+    <header class="app-header">
+      <h1>FlexMix</h1>
+      <p class="tagline">E85 blend calculator</p>
+    </header>
+
+    <section class="card result-card" aria-labelledby="result-title">
+      <h2 id="result-title" class="visually-hidden">Result</h2>
+      <div id="result" aria-live="polite" aria-atomic="true"></div>
+      <p class="tip"><strong>Pump E85 first</strong>, then fill the rest with pump gas until the pump shuts off. Any error in the tank-size or fuel-level estimate then lands on the pump-gas side and lowers ethanol slightly instead of raising it.</p>
+      <p class="note">* Octane is a rough linear estimate. Ethanol's octane blending isn't linear, so the real number is usually a bit higher at low blends.</p>
+    </section>
+
+    <form id="form" novalidate autocomplete="off">
+      <section class="card" aria-labelledby="vehicle-title">
+        <h2 id="vehicle-title">Vehicle</h2>
+        <div class="field">
+          <label for="capacity">Tank capacity</label>
+          <div class="input-wrap">
+            <input id="capacity" name="capacity" type="text" inputmode="decimal" enterkeyhint="done">
+            <span class="unit">gal</span>
+          </div>
+          <p class="error" id="capacity-error" hidden></p>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="current-title">
+        <h2 id="current-title">Current tank</h2>
+        <div class="field">
+          <label for="level">Fuel level</label>
+          <div class="input-wrap">
+            <input id="level" name="level" type="text" inputmode="decimal" enterkeyhint="done">
+            <span class="unit">%</span>
+          </div>
+          <input id="levelRange" class="range" type="range" min="0" max="100" step="1" aria-label="Fuel level slider">
+          <p class="error" id="level-error" hidden></p>
+        </div>
+        <div class="field">
+          <label for="currentE">Current ethanol</label>
+          <div class="input-wrap">
+            <input id="currentE" name="currentE" type="text" inputmode="decimal" enterkeyhint="done" aria-describedby="currentE-hint">
+            <span class="unit">%</span>
+          </div>
+          <p class="hint" id="currentE-hint">Read it from the flex fuel sensor.</p>
+          <p class="error" id="currentE-error" hidden></p>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="target-title">
+        <h2 id="target-title">Target</h2>
+        <div class="field">
+          <label for="targetE">Desired ethanol</label>
+          <div class="input-wrap">
+            <input id="targetE" name="targetE" type="text" inputmode="decimal" enterkeyhint="done">
+            <span class="unit">%</span>
+          </div>
+          <div class="chips" role="group" aria-label="Quick picks">
+            <button type="button" class="chip" data-target="30" aria-pressed="false">E30</button>
+            <button type="button" class="chip" data-target="40" aria-pressed="false">E40</button>
+            <button type="button" class="chip" data-target="50" aria-pressed="false">E50</button>
+          </div>
+          <p class="error" id="targetE-error" hidden></p>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="station-title">
+        <h2 id="station-title">Station</h2>
+        <div class="field">
+          <label for="pumpAkiSelect">Pump gas octane (AKI)</label>
+          <select id="pumpAkiSelect" name="pumpAkiSelect">
+            <option value="87">87</option>
+            <option value="89">89</option>
+            <option value="91">91</option>
+            <option value="93">93</option>
+            <option value="custom">Custom…</option>
+          </select>
+          <div class="input-wrap custom-aki" id="pumpAkiCustomWrap" hidden>
+            <input id="pumpAkiCustom" name="pumpAkiCustom" type="text" inputmode="decimal" enterkeyhint="done" aria-label="Custom pump gas octane (AKI)" placeholder="e.g. 90">
+            <span class="unit">AKI</span>
+          </div>
+          <p class="error" id="pumpAki-error" hidden></p>
+        </div>
+        <div class="field">
+          <label for="pumpE">Pump gas ethanol</label>
+          <div class="input-wrap">
+            <input id="pumpE" name="pumpE" type="text" inputmode="decimal" enterkeyhint="done" aria-describedby="pumpE-hint">
+            <span class="unit">%</span>
+          </div>
+          <p class="hint" id="pumpE-hint">Use 0 for ethanol-free.</p>
+          <p class="error" id="pumpE-error" hidden></p>
+        </div>
+        <div class="field">
+          <label for="e85E">E85 ethanol content</label>
+          <div class="input-wrap">
+            <input id="e85E" name="e85E" type="text" inputmode="decimal" enterkeyhint="done" aria-describedby="e85E-hint">
+            <span class="unit">%</span>
+          </div>
+          <p class="hint" id="e85E-hint">US E85 can legally range from 51% to 83% depending on season, so test it if possible.</p>
+          <p class="error" id="e85E-error" hidden></p>
+        </div>
+      </section>
+
+      <details class="card advanced" id="advanced">
+        <summary><h2>Advanced</h2></summary>
+        <div class="field">
+          <label for="fillTo">Fill to</label>
+          <div class="input-wrap">
+            <input id="fillTo" name="fillTo" type="text" inputmode="decimal" enterkeyhint="done">
+            <span class="unit">%</span>
+          </div>
+          <p class="error" id="fillTo-error" hidden></p>
+        </div>
+        <div class="field">
+          <label for="e85Aki">E85 octane assumption</label>
+          <div class="input-wrap">
+            <input id="e85Aki" name="e85Aki" type="text" inputmode="decimal" enterkeyhint="done">
+            <span class="unit">AKI</span>
+          </div>
+          <p class="error" id="e85Aki-error" hidden></p>
+        </div>
+      </details>
+
+      <button type="button" id="reset" class="reset">Reset to defaults</button>
+    </form>
+  </main>
+</body>
+</html>
