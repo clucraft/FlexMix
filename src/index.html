@@ -17,8 +17,27 @@
   <script type="module" src="app.js"></script>
 </head>
 <body>
+  <!-- Icon sprite: 24×24 stroke icons, coloured via currentColor. -->
+  <svg class="sprite" aria-hidden="true" focusable="false">
+    <symbol id="i-car" viewBox="0 0 24 24"><path d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11"/><rect x="3" y="11" width="18" height="6" rx="2"/><path d="M6 17v2M18 17v2M7 14h.01M17 14h.01"/></symbol>
+    <symbol id="i-gauge" viewBox="0 0 24 24"><path d="M3.5 17a8.5 8.5 0 1 1 17 0"/><path d="M12 17l3.5-4.5"/><circle cx="12" cy="17" r="1.2"/><path d="M6 17h.01M18 17h.01M12 8.5v.01"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></symbol>
+    <symbol id="i-pump" viewBox="0 0 24 24"><path d="M4 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16M3 21h12M4 10h10"/><path d="M14 8h2a2 2 0 0 1 2 2v6a1.5 1.5 0 0 0 3 0V8l-3-3"/></symbol>
+    <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></symbol>
+    <symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 3s-6 6.5-6 11a6 6 0 0 0 12 0c0-4.5-6-11-6-11z"/></symbol>
+    <symbol id="i-warn" viewBox="0 0 24 24"><path d="M10.3 4.3L2.5 18a2 2 0 0 0 1.7 3h15.6a2 2 0 0 0 1.7-3L13.7 4.3a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></symbol>
+    <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></symbol>
+    <symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 2.6-6.4L3 8"/><path d="M3 3v5h5"/></symbol>
+  </svg>
+
   <main class="app">
     <header class="app-header">
+      <svg class="logo" viewBox="112 64 288 400" aria-hidden="true" focusable="false">
+        <clipPath id="logo-drop"><path d="M256 88C256 88 136 232 136 316a120 120 0 0 0 240 0C376 232 256 88 256 88Z"/></clipPath>
+        <rect x="0" y="300" width="512" height="212" fill="currentColor" clip-path="url(#logo-drop)"/>
+        <path d="M256 88C256 88 136 232 136 316a120 120 0 0 0 240 0C376 232 256 88 256 88Z" fill="none" stroke="currentColor" stroke-width="32" stroke-linejoin="round"/>
+      </svg>
       <h1>FlexMix</h1>
       <p class="tagline">E85 blend calculator</p>
     </header>
@@ -26,13 +45,13 @@
     <section class="card result-card" aria-labelledby="result-title">
       <h2 id="result-title" class="visually-hidden">Result</h2>
       <div id="result" aria-live="polite" aria-atomic="true"></div>
-      <p class="tip"><strong>Pump E85 first</strong>, then fill the rest with pump gas until the pump shuts off. Any error in the tank-size or fuel-level estimate then lands on the pump-gas side and lowers ethanol slightly instead of raising it.</p>
+      <p class="tip"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-bulb"/></svg><span><strong>Pump E85 first</strong>, then fill the rest with pump gas until the pump shuts off. Any error in the tank-size or fuel-level estimate then lands on the pump-gas side and lowers ethanol slightly instead of raising it.</span></p>
       <p class="note">* Octane is a rough linear estimate. Ethanol's octane blending isn't linear, so the real number is usually a bit higher at low blends.</p>
     </section>
 
     <form id="form" novalidate autocomplete="off">
       <section class="card" aria-labelledby="vehicle-title">
-        <h2 id="vehicle-title">Vehicle</h2>
+        <h2 id="vehicle-title"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-car"/></svg>Vehicle</h2>
         <div class="field">
           <label for="capacity">Tank capacity</label>
           <div class="input-wrap">
@@ -44,7 +63,7 @@
       </section>
 
       <section class="card" aria-labelledby="current-title">
-        <h2 id="current-title">Current tank</h2>
+        <h2 id="current-title"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-gauge"/></svg>Current tank</h2>
         <div class="field">
           <label for="level">Fuel level</label>
           <div class="input-wrap">
@@ -66,7 +85,7 @@
       </section>
 
       <section class="card" aria-labelledby="target-title">
-        <h2 id="target-title">Target</h2>
+        <h2 id="target-title"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-target"/></svg>Target</h2>
         <div class="field">
           <label for="targetE">Desired ethanol</label>
           <div class="input-wrap">
@@ -83,7 +102,7 @@
       </section>
 
       <section class="card" aria-labelledby="station-title">
-        <h2 id="station-title">Station</h2>
+        <h2 id="station-title"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-pump"/></svg>Station</h2>
         <div class="field">
           <label for="pumpAkiSelect">Pump gas octane (AKI)</label>
           <select id="pumpAkiSelect" name="pumpAkiSelect">
@@ -120,7 +139,7 @@
       </section>
 
       <details class="card advanced" id="advanced">
-        <summary><h2>Advanced</h2></summary>
+        <summary><h2><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-sliders"/></svg>Advanced</h2></summary>
         <div class="field">
           <label for="fillTo">Fill to</label>
           <div class="input-wrap">
@@ -139,7 +158,7 @@
         </div>
       </details>
 
-      <button type="button" id="reset" class="reset">Reset to defaults</button>
+      <button type="button" id="reset" class="reset"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-reset"/></svg>Reset to defaults</button>
     </form>
   </main>
 </body>

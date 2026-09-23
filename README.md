@@ -85,9 +85,10 @@ Then open http://localhost:8085.
 
 ## Deploy on Unraid
 
-Copy the project onto the server, for example to `/mnt/user/appdata/flexmix`, using `git clone`, `scp -r`, or an SMB share. Then build and start it from the Unraid terminal:
+Clone the repo onto the server and build it from the Unraid terminal (git is included with Unraid):
 
 ```bash
+git clone https://github.com/clucraft/FlexMix.git /mnt/user/appdata/flexmix
 cd /mnt/user/appdata/flexmix
 docker compose up -d --build
 ```
@@ -101,7 +102,12 @@ docker build -t flexmix:latest .
 docker run -d --name flexmix -p 8085:80 --restart unless-stopped flexmix:latest
 ```
 
-**Updating:** copy the changed files over and run `docker compose up -d --build` again. Then run `docker image prune -f` to clear out the old image.
+**Updating:** pull the latest code, rebuild, and clear out the old image:
+
+```bash
+cd /mnt/user/appdata/flexmix
+git pull && docker compose up -d --build && docker image prune -f
+```
 
 **Health:** `docker ps` should show `healthy`, or run `curl http://<unraid-ip>:8085/healthz`.
 

@@ -69,6 +69,8 @@ function toInputs(state) {
   return inputs;
 }
 
+const icon = (name) => `<svg class="icon" aria-hidden="true" focusable="false"><use href="#i-${name}"/></svg>`;
+
 const gal = (v) => v.toFixed(2);
 const pct = (v) => v.toFixed(1);
 const octaneLabel = (v) => (Number.isInteger(v) ? String(v) : v.toFixed(1));
@@ -95,21 +97,21 @@ function renderResult(r, pumpAki) {
   const out = $('result');
   if (r.status === 'invalid') {
     const items = Object.values(r.errors).map((m) => `<li>${m}</li>`).join('');
-    out.innerHTML = `<p class="result-invalid">Check your inputs</p><ul class="error-list">${items}</ul>`;
+    out.innerHTML = `<p class="result-invalid">${icon('alert')}Check your inputs</p><ul class="error-list">${items}</ul>`;
     return;
   }
 
   let notice = '';
   if (r.status === 'too-low') {
-    notice = `<p class="notice">Lowest possible this fill is <strong>E${pct(r.limitPct)}</strong>: add pump gas only.</p>`;
+    notice = `<p class="notice">${icon('warn')}<span>Lowest possible this fill is <strong>E${pct(r.limitPct)}</strong>: add pump gas only.</span></p>`;
   } else if (r.status === 'too-high') {
-    notice = `<p class="notice">Highest possible this fill is <strong>E${pct(r.limitPct)}</strong>: add E85 only.</p>`;
+    notice = `<p class="notice">${icon('warn')}<span>Highest possible this fill is <strong>E${pct(r.limitPct)}</strong>: add E85 only.</span></p>`;
   }
 
   out.innerHTML = `
     ${notice}
-    <p class="big"><span class="step">1</span><span>Add <strong>${gal(r.e85Gal)} gal E85</strong></span></p>
-    <p class="big"><span class="step">2</span><span>Fill <strong>${gal(r.pumpGal)} gal of ${octaneLabel(pumpAki)}</strong></span></p>
+    <p class="big"><span class="step">1</span><span><span class="verb">${icon('drop')}Add</span> <strong>${gal(r.e85Gal)} gal E85</strong></span></p>
+    <p class="big"><span class="step">2</span><span><span class="verb">${icon('pump')}Fill</span> <strong>${gal(r.pumpGal)} gal of ${octaneLabel(pumpAki)}</strong></span></p>
     <dl class="stats">
       <div><dt>Total added</dt><dd>${gal(r.totalGal)} gal</dd></div>
       <div><dt>Resulting blend</dt><dd>E${pct(r.blendPct)}</dd></div>

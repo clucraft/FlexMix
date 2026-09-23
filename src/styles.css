@@ -45,11 +45,11 @@ body {
 .app-header {
   display: flex;
   align-items: baseline;
-  gap: 10px;
+  gap: 8px;
   margin: 4px 2px 14px;
 }
 .app-header h1 { margin: 0; font-size: 1.5rem; letter-spacing: -0.01em; }
-.app-header h1::first-letter { color: var(--accent); }
+.logo { width: 20px; height: 28px; flex: none; align-self: center; color: var(--accent); }
 .tagline { margin: 0; color: var(--muted); font-size: 0.9rem; }
 
 .card {
@@ -60,6 +60,9 @@ body {
   margin-bottom: 14px;
 }
 .card h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin: 0 0 12px;
   font-size: 0.8rem;
   font-weight: 700;
@@ -67,6 +70,23 @@ body {
   text-transform: uppercase;
   color: var(--muted);
 }
+
+/* ---------- Icons ---------- */
+
+.sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+.icon {
+  width: 1.15em;
+  height: 1.15em;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.card h2 .icon { width: 18px; height: 18px; color: var(--accent); }
 
 /* ---------- Fields ---------- */
 
@@ -191,6 +211,10 @@ input[aria-invalid="true"] { border-color: var(--error); }
 .advanced[open] summary { margin-bottom: 12px; }
 
 .reset {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   width: 100%;
   min-height: var(--tap);
   font: inherit;
@@ -223,6 +247,14 @@ input[aria-invalid="true"] { border-color: var(--error); }
   font-variant-numeric: tabular-nums;
   color: var(--accent);
 }
+.verb {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+}
+.verb .icon { width: 20px; height: 20px; }
+
 .step {
   flex: none;
   display: grid;
@@ -257,6 +289,9 @@ input[aria-invalid="true"] { border-color: var(--error); }
 }
 
 .notice {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
   margin: 0 0 12px;
   padding: 10px 12px;
   background: var(--warn-bg);
@@ -264,7 +299,12 @@ input[aria-invalid="true"] { border-color: var(--error); }
   border-radius: 10px;
 }
 
+.notice .icon { width: 20px; height: 20px; margin-top: 2px; color: #f5c542; }
+
 .result-invalid {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin: 0;
   font-size: 1.25rem;
   font-weight: 700;
@@ -277,10 +317,15 @@ input[aria-invalid="true"] { border-color: var(--error); }
 }
 
 .tip {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
   margin: 14px 0 0;
   font-size: 0.9rem;
   color: var(--text);
 }
+.tip .icon { width: 20px; height: 20px; margin-top: 1px; color: var(--accent); }
+
 .note {
   margin: 8px 0 0;
   font-size: 0.8rem;
