@@ -8,12 +8,12 @@ It's a static site (plain HTML, CSS and ES-module JavaScript with no build step 
 
 | Result | Target out of reach | Input validation |
 | :---: | :---: | :---: |
-| <img src="docs/screenshots/result.png" width="260" alt="Result: add 6.14 gal E85, then fill 6.76 gal of 93 to reach E40"> | <img src="docs/screenshots/unreachable.png" width="260" alt="Warning: highest possible this fill is E45.0, add E85 only"> | <img src="docs/screenshots/validation.png" width="260" alt="Validation error: E85 ethanol must be higher than pump gas ethanol"> |
+| <img src="docs/screenshots/result-icons.png" width="260" alt="Result: add 6.14 gal E85, then fill 6.76 gal of 93 to reach E40"> | <img src="docs/screenshots/unreachable-icons.png" width="260" alt="Warning: highest possible this fill is E45.0, add E85 only"> | <img src="docs/screenshots/validation-icons.png" width="260" alt="Validation error: E85 ethanol must be higher than pump gas ethanol"> |
 
 <details>
 <summary>Full page</summary>
 
-<img src="docs/screenshots/full-page.png" width="320" alt="The whole FlexMix page, showing all input cards with Advanced expanded">
+<img src="docs/screenshots/full-page-icons.png" width="320" alt="The whole FlexMix page, showing all input cards with Advanced expanded">
 
 </details>
 
