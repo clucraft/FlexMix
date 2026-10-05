@@ -184,9 +184,9 @@ input[aria-invalid="true"] { border-color: var(--error); }
   border-color: var(--accent);
 }
 
-/* ---------- Advanced ---------- */
+/* ---------- Collapsible cards (Check, Advanced) ---------- */
 
-.advanced summary {
+.collapsible summary {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -195,9 +195,9 @@ input[aria-invalid="true"] { border-color: var(--error); }
   cursor: pointer;
   list-style: none;
 }
-.advanced summary::-webkit-details-marker { display: none; }
-.advanced summary h2 { margin: 0; }
-.advanced summary::after {
+.collapsible summary::-webkit-details-marker { display: none; }
+.collapsible summary h2 { margin: 0; }
+.collapsible summary::after {
   content: "";
   width: 8px;
   height: 8px;
@@ -207,8 +207,8 @@ input[aria-invalid="true"] { border-color: var(--error); }
   transform: rotate(45deg);
   transition: transform 0.15s;
 }
-.advanced[open] summary::after { transform: rotate(-135deg); }
-.advanced[open] summary { margin-bottom: 12px; }
+.collapsible[open] summary::after { transform: rotate(-135deg); }
+.collapsible[open] summary { margin-bottom: 12px; }
 
 .reset {
   display: flex;
@@ -225,6 +225,79 @@ input[aria-invalid="true"] { border-color: var(--error); }
   border-radius: 10px;
   cursor: pointer;
 }
+
+/* ---------- Saved stations & E85 check ---------- */
+
+.station-row {
+  display: flex;
+  gap: 8px;
+}
+.station-row select { flex: 1; min-width: 0; }
+
+.ghost-btn,
+.primary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: var(--tap);
+  padding: 0 14px;
+  font: inherit;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.ghost-btn {
+  flex: none;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--field-border);
+}
+.remove-btn { min-width: var(--tap); padding: 0 12px; }
+.remove-btn span:empty { display: none; }
+.ghost-btn[data-confirm] { color: var(--error); border-color: var(--error); }
+.primary-btn {
+  width: 100%;
+  margin-top: 12px;
+  color: var(--accent-ink);
+  background: var(--accent);
+  border: 1px solid var(--accent);
+}
+
+#stationName { padding-right: 14px; }
+.optional { font-weight: 400; color: var(--muted); }
+
+.check-intro { margin: 0 0 14px; }
+.check-intro strong { color: var(--text); }
+
+.check-result:not(:empty) {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--card-border);
+}
+.check-label { margin: 0; color: var(--muted); }
+.check-value {
+  margin: 2px 0 0;
+  font-size: 2.25rem;
+  font-weight: 800;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+}
+.check-range { margin: 4px 0 12px; font-size: 0.9rem; color: var(--muted); }
+.check-text { margin: 8px 0 0; }
+.check-tip,
+.saved {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin: 0;
+  font-size: 0.9rem;
+}
+.check-tip .icon { width: 20px; height: 20px; color: var(--accent); }
+.saved { font-size: 1rem; font-weight: 600; }
+.saved .icon { width: 22px; height: 22px; color: var(--accent); }
+.check-save { margin-top: 16px; }
 
 /* ---------- Result ---------- */
 

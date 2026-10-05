@@ -2,7 +2,9 @@
 
 A small, mobile-first E85 blend calculator. Enter your tank size, how full it is, the ethanol content the flex fuel sensor reports, and the blend you want. FlexMix tells you how many gallons of E85 and pump gas to add.
 
-It's a static site (plain HTML, CSS and ES-module JavaScript with no build step and no external requests) served by `nginx:alpine`. Inputs are saved in the browser's localStorage.
+After a fill, it can also work out a station's real E85 ethanol content from your flex fuel sensor reading, and remember it per station.
+
+It's a static site (plain HTML, CSS and ES-module JavaScript with no build step and no external requests) served by `nginx:alpine`. Inputs and saved stations are kept in the browser's localStorage.
 
 ## Screenshots
 
@@ -10,10 +12,14 @@ It's a static site (plain HTML, CSS and ES-module JavaScript with no build step 
 | :---: | :---: | :---: |
 | <img src="docs/screenshots/result-icons.png" width="260" alt="Result: add 6.14 gal E85, then fill 6.76 gal of 93 to reach E40"> | <img src="docs/screenshots/unreachable-icons.png" width="260" alt="Warning: highest possible this fill is E45.0, add E85 only"> | <img src="docs/screenshots/validation-icons.png" width="260" alt="Validation error: E85 ethanol must be higher than pump gas ethanol"> |
 
+| Check station E85 | Saved stations |
+| :---: | :---: |
+| <img src="docs/screenshots/e85-check.png" width="260" alt="Check station E85 card estimating the station's E85 at E79.2, with a field to remember it as Sheetz Rt 30"> | <img src="docs/screenshots/saved-stations.png" width="260" alt="Station card with a saved station selected, filling in its measured E85 content"> |
+
 <details>
 <summary>Full page</summary>
 
-<img src="docs/screenshots/full-page-icons.png" width="320" alt="The whole FlexMix page, showing all input cards with Advanced expanded">
+<img src="docs/screenshots/full-page-check.png" width="320" alt="The whole FlexMix page, showing all input cards with Advanced expanded">
 
 </details>
 
@@ -54,6 +60,26 @@ Ethanol's octane blending isn't linear, so the real number is usually a bit high
 
 **Pump order:** pump the E85 first, then fill the rest with pump gas until the pump shuts off. Any error in the tank-size or fuel-level estimate then lands on the pump-gas side and lowers the ethanol slightly instead of raising it.
 
+## Checking a station's E85
+
+E85 can legally range from 51% to 83% ethanol, so the E85 content you plan with is often a guess. The **Check station E85** card works it out from your flex fuel sensor instead:
+
+1. Plan and pump the fill as usual. Don't change **Current tank** afterwards.
+2. Drive 5–10 minutes so the new fuel mixes and reaches the sensor.
+3. Open **Check station E85**. It prefills the planned gallons, so correct them to match the pump display, then enter the sensor reading.
+4. Tap **Use this value** to copy the result into *E85 ethanol content*. Type a station name first to also remember it under **Saved station** for next time.
+
+It's the same mixing equation, solved for the E85 content, where `x` and `y` are the gallons actually pumped:
+
+```
+Vf  = V0 + x + y
+e85 = (measured·Vf − V0·e0 − y·eg) / x
+```
+
+Sensor error is multiplied by `Vf / x`. On a typical fill (a quarter tank at E30, topped up to E40) a sensor that's 1% off moves the estimate by about 2.8 points. A near-empty tank filled with E85 only cuts that to about 1.1, so that's the best time to check. The app shows this range, and warns when the result is outside 51–83%, impossible, or implies more fuel than the tank holds.
+
+Saved stations show the date they were measured. E85 blends change with the season, so the app suggests re-checking a station after 60 days.
+
 ## Project layout
 
 ```
@@ -61,9 +87,10 @@ src/            web root (copied into the image)
   index.html
   app.js        DOM wiring, localStorage
   calc.js       pure math + validation (unit tested)
+  stations.js   saved-station list helpers (unit tested)
   styles.css
   manifest.webmanifest, icon.svg
-tests/calc.test.js
+tests/          calc, E85 check and station tests (node --test)
 Dockerfile, nginx.conf, docker-compose.yml
 ```
 

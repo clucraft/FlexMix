@@ -29,6 +29,23 @@ const PERCENT_FIELDS = {
   fillTo: 'Fill to',
 };
 
+function checkCapacity(errors, inputs) {
+  if (!Number.isFinite(inputs.capacity)) {
+    errors.capacity = 'Tank capacity: enter a number.';
+  } else if (inputs.capacity <= 0) {
+    errors.capacity = 'Tank capacity must be greater than 0.';
+  }
+}
+
+function checkPercent(errors, inputs, key, label) {
+  const v = inputs[key];
+  if (!Number.isFinite(v)) {
+    errors[key] = `${label}: enter a number.`;
+  } else if (v < 0 || v > 100) {
+    errors[key] = `${label} must be between 0 and 100%.`;
+  }
+}
+
 /**
  * Validate raw inputs. Returns an object mapping field name → message;
  * an empty object means everything is valid.
@@ -36,20 +53,8 @@ const PERCENT_FIELDS = {
 export function validate(inputs) {
   const errors = {};
 
-  if (!Number.isFinite(inputs.capacity)) {
-    errors.capacity = 'Tank capacity: enter a number.';
-  } else if (inputs.capacity <= 0) {
-    errors.capacity = 'Tank capacity must be greater than 0.';
-  }
-
-  for (const [key, label] of Object.entries(PERCENT_FIELDS)) {
-    const v = inputs[key];
-    if (!Number.isFinite(v)) {
-      errors[key] = `${label}: enter a number.`;
-    } else if (v < 0 || v > 100) {
-      errors[key] = `${label} must be between 0 and 100%.`;
-    }
-  }
+  checkCapacity(errors, inputs);
+  for (const [key, label] of Object.entries(PERCENT_FIELDS)) checkPercent(errors, inputs, key, label);
 
   for (const [key, label] of [['pumpAki', 'Pump gas octane'], ['e85Aki', 'E85 octane']]) {
     const v = inputs[key];
@@ -131,5 +136,79 @@ export function calculate(inputs) {
     blendPct: blend * 100,
     limitPct: limit === null ? null : limit * 100,
     estAki: estimateAki({ blend, eg, e85, pumpAki: inputs.pumpAki, e85Aki: inputs.e85Aki }),
+  };
+}
+
+// Legal US range for E85 (ASTM D5798), used to flag suspicious estimates.
+export const E85_LEGAL_MIN = 51;
+export const E85_LEGAL_MAX = 83;
+
+/**
+ * Validate the after-fill check inputs. Uses the pre-fill tank values
+ * (capacity, level, currentE, pumpE) plus what was actually pumped
+ * (e85Added, pumpAdded, in gallons) and the sensor reading after the
+ * fill (measuredE, percent).
+ */
+export function validateE85Check(inputs) {
+  const errors = {};
+
+  checkCapacity(errors, inputs);
+  checkPercent(errors, inputs, 'level', 'Fuel level');
+  checkPercent(errors, inputs, 'currentE', 'Current ethanol');
+  checkPercent(errors, inputs, 'pumpE', 'Pump gas ethanol');
+  checkPercent(errors, inputs, 'measuredE', 'Ethanol after the fill');
+
+  if (!Number.isFinite(inputs.e85Added)) {
+    errors.e85Added = 'E85 pumped: enter a number.';
+  } else if (inputs.e85Added <= 0) {
+    errors.e85Added = 'E85 pumped must be more than 0 gal. This check needs some E85 in the fill.';
+  }
+
+  if (!Number.isFinite(inputs.pumpAdded)) {
+    errors.pumpAdded = 'Pump gas pumped: enter a number (0 if none).';
+  } else if (inputs.pumpAdded < 0) {
+    errors.pumpAdded = 'Pump gas pumped can’t be negative.';
+  }
+
+  return errors;
+}
+
+/**
+ * Back-calculate the E85's ethanol content from a sensor reading taken
+ * after the fill:
+ *
+ *   measured·Vf = V0·e0 + x·e85 + y·eg   →   e85 = (measured·Vf − V0·e0 − y·eg) / x
+ *
+ * with V0 = C·L and Vf = V0 + x + y (actual gallons from the pump display).
+ *
+ * Returns { status, errors } where status is 'invalid', 'implausible'
+ * (the answer falls outside 0–100%, so an input must be wrong) or 'ok'.
+ * Unless invalid, it also returns:
+ *   e85Pct        – estimated E85 ethanol content (%)
+ *   errorPerPoint – how many points e85Pct moves per 1 point of sensor error (Vf/x)
+ *   outsideLegal  – e85Pct is outside the legal 51–83% range
+ *   overCapacity  – more fuel than the tank holds, so the level was likely too high
+ */
+export function estimateE85Content(inputs) {
+  const errors = validateE85Check(inputs);
+  if (Object.keys(errors).length > 0) return { status: 'invalid', errors };
+
+  const V0 = inputs.capacity * (inputs.level / 100);
+  const x = inputs.e85Added;
+  const y = inputs.pumpAdded;
+  const Vf = V0 + x + y;
+  const e0 = inputs.currentE / 100;
+  const eg = inputs.pumpE / 100;
+  const measured = inputs.measuredE / 100;
+
+  const e85Pct = ((measured * Vf - V0 * e0 - y * eg) / x) * 100;
+
+  return {
+    status: e85Pct < 0 || e85Pct > 100 ? 'implausible' : 'ok',
+    errors,
+    e85Pct,
+    errorPerPoint: Vf / x,
+    outsideLegal: e85Pct < E85_LEGAL_MIN || e85Pct > E85_LEGAL_MAX,
+    overCapacity: Vf > inputs.capacity * 1.03,
   };
 }
